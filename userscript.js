@@ -1,3 +1,13 @@
+// ==UserScript==
+// @name         New Userscript
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       You
+// @match        http://ybt.ssoier.cn:8088/problem_show.php?pid=*
+// @grant        none
+// ==/UserScript==
+
 function createTop() {
     let bf = document.querySelector("body > center")
     let af = document.querySelector("body>center>hr:nth-child(3)")
@@ -67,16 +77,22 @@ function loadBoot(){
     script.setAttribute('crossorigin', 'anonymous');
     script.href = "https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css";
     document.documentElement.appendChild(script);
-    
+
     let script3 = document.createElement('script');
-    script3.src = "https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js";
+    script3.src = "https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js";
     document.documentElement.appendChild(script3);
-    
+
     let script2 = document.createElement('script');
     script2.setAttribute('integrity', 'sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd');
     script2.setAttribute('crossorigin', 'anonymous');
     script2.src = "https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js";
-    document.documentElement.appendChild(script2);    
+    document.documentElement.appendChild(script2);
+
+    let script1 = document.createElement('link');
+    script1.setAttribute('rel', 'stylesheet');
+    script1.setAttribute('type', 'text/css');
+    script1.href = "https://cdn.jsdelivr.net/gh/nick-cjyx9/fxxkybt/ps.css";
+    document.documentElement.appendChild(script1);
 }
 
 function getId(){
@@ -111,5 +127,5 @@ function isSigned(){
 
   createBtn()
   loadBoot()
-    
+
 })();
