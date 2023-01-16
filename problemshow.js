@@ -63,7 +63,7 @@ function createBtn(){
     let script1 = document.createElement('link');
     script1.setAttribute('rel', 'stylesheet');
     script1.setAttribute('type', 'text/css');
-    script1.href = "https://cdn.jsdelivr.net/gh/nick-cjyx9/fxxkybt/ps.css";
+    script1.href = "https://cdn.jsdelivr.net/gh/nick-cjyx9/fxxkybt/problemshow.css";
     document.documentElement.appendChild(script1);
 
     let script = document.createElement('link');
