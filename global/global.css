@@ -1,0 +1,42 @@
+* {
+    text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -ms-text-size-adjust: none;
+    font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", "Noto Sans", "Noto Sans CJK SC", "Noto Sans CJK", "Source Han Sans", "PingFang SC", "Segoe UI", "Microsoft YaHei", sans-serif;
+}
+
+.webtop,
+.menu,
+body>center>hr:nth-child(4),
+body>center>hr:nth-child(11) {
+    display: none;
+}
+
+body>center {
+    padding: 0;
+    background: hsla(0, 0%, 100%, 0.6);
+}
+
+body {
+    background-image: url("https://s2.loli.net/2023/01/16/eZMEqJrzXuWSdHF.png");
+    background-position-x: -850px;
+}
+
+@media (min-width: 768px) {
+    body>center>center:nth-child(10) {
+        width: 750px;
+    }
+}
+
+@media (min-width: 992px) {
+    body>center>center:nth-child(10) {
+        width: 970px;
+    }
+}
+
+@media (min-width: 1200px) {
+    body>center>center:nth-child(10) {
+        width: 1170px;
+    }
+}

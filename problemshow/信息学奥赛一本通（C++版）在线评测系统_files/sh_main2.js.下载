@@ -1,0 +1,723 @@
+/*
+SHJS - Syntax Highlighting in JavaScript
+Copyright (C) 2007, 2008 gnombat@users.sourceforge.net
+License: http://shjs.sourceforge.net/doc/gplv3.html
+*/
+
+/*
+var banArray = new Array(2); 
+var counter = 1;
+if(document.images) 
+{
+   banArray[0] = new Image;
+   banArray[0].src = "ybt123.jpg";
+   //banArray[1] = new Image;
+   //banArray[1].src = "ry001.gif";
+}
+function changeBanner() 
+{
+  if(counter > 1)
+    counter = 0;
+  document.banner.src = banArray[counter].src; //sets a new banner
+  counter++; 
+}
+var timer = window.setInterval("changeBanner()", 3000);
+*/
+/////////////////////////////////////////////////////////////
+
+if (! this.sh_languages) {
+  this.sh_languages = {};
+}
+var sh_requests = {};
+
+function sh_isEmailAddress(url) {
+  if (/^mailto:/.test(url)) {
+    return false;
+  }
+  return url.indexOf('@') !== -1;
+}
+
+function sh_setHref(tags, numTags, inputString) {
+  var url = inputString.substring(tags[numTags - 2].pos, tags[numTags - 1].pos);
+  if (url.length >= 2 && url.charAt(0) === '<' && url.charAt(url.length - 1) === '>') {
+    url = url.substr(1, url.length - 2);
+  }
+  if (sh_isEmailAddress(url)) {
+    url = 'mailto:' + url;
+  }
+  tags[numTags - 2].node.href = url;
+}
+
+/*
+Konqueror has a bug where the regular expression /$/g will not match at the end
+of a line more than once:
+
+  var regex = /$/g;
+  var match;
+
+  var line = '1234567890';
+  regex.lastIndex = 10;
+  match = regex.exec(line);
+
+  var line2 = 'abcde';
+  regex.lastIndex = 5;
+  match = regex.exec(line2);  // fails
+*/
+function sh_konquerorExec(s) {
+  var result = [''];
+  result.index = s.length;
+  result.input = s;
+  return result;
+}
+
+/**
+Highlights all elements containing source code in a text string.  The return
+value is an array of objects, each representing an HTML start or end tag.  Each
+object has a property named pos, which is an integer representing the text
+offset of the tag. Every start tag also has a property named node, which is the
+DOM element started by the tag. End tags do not have this property.
+@param  inputString  a text string
+@param  language  a language definition object
+@return  an array of tag objects
+*/
+function sh_highlightString(inputString, language) {
+  if (/Konqueror/.test(navigator.userAgent)) {
+    if (! language.konquered) {
+      for (var s = 0; s < language.length; s++) {
+        for (var p = 0; p < language[s].length; p++) {
+          var r = language[s][p][0];
+          if (r.source === '$') {
+            r.exec = sh_konquerorExec;
+          }
+        }
+      }
+      language.konquered = true;
+    }
+  }
+
+  var a = document.createElement('a');
+  var span = document.createElement('span');
+
+  // the result
+  var tags = [];
+  var numTags = 0;
+
+  // each element is a pattern object from language
+  var patternStack = [];
+
+  // the current position within inputString
+  var pos = 0;
+
+  // the name of the current style, or null if there is no current style
+  var currentStyle = null;
+
+  var output = function(s, style) {
+    var length = s.length;
+    // this is more than just an optimization - we don't want to output empty <span></span> elements
+    if (length === 0) {
+      return;
+    }
+    if (! style) {
+      var stackLength = patternStack.length;
+      if (stackLength !== 0) {
+        var pattern = patternStack[stackLength - 1];
+        // check whether this is a state or an environment
+        if (! pattern[3]) {
+          // it's not a state - it's an environment; use the style for this environment
+          style = pattern[1];
+        }
+      }
+    }
+    if (currentStyle !== style) {
+      if (currentStyle) {
+        tags[numTags++] = {pos: pos};
+        if (currentStyle === 'sh_url') {
+          sh_setHref(tags, numTags, inputString);
+        }
+      }
+      if (style) {
+        var clone;
+        if (style === 'sh_url') {
+          clone = a.cloneNode(false);
+        }
+        else {
+          clone = span.cloneNode(false);
+        }
+        clone.className = style;
+        tags[numTags++] = {node: clone, pos: pos};
+      }
+    }
+    pos += length;
+    currentStyle = style;
+  };
+
+  var endOfLinePattern = /\r\n|\r|\n/g;
+  endOfLinePattern.lastIndex = 0;
+  var inputStringLength = inputString.length;
+  while (pos < inputStringLength) {
+    var start = pos;
+    var end;
+    var startOfNextLine;
+    var endOfLineMatch = endOfLinePattern.exec(inputString);
+    if (endOfLineMatch === null) {
+      end = inputStringLength;
+      startOfNextLine = inputStringLength;
+    }
+    else {
+      end = endOfLineMatch.index;
+      startOfNextLine = endOfLinePattern.lastIndex;
+    }
+
+    var line = inputString.substring(start, end);
+
+    var matchCache = [];
+    for (;;) {
+      var posWithinLine = pos - start;
+
+      var stateIndex;
+      var stackLength = patternStack.length;
+      if (stackLength === 0) {
+        stateIndex = 0;
+      }
+      else {
+        // get the next state
+        stateIndex = patternStack[stackLength - 1][2];
+      }
+
+      var state = language[stateIndex];
+      var numPatterns = state.length;
+      var mc = matchCache[stateIndex];
+      if (! mc) {
+        mc = matchCache[stateIndex] = [];
+      }
+      var bestMatch = null;
+      var bestPatternIndex = -1;
+      for (var i = 0; i < numPatterns; i++) {
+        var match;
+        if (i < mc.length && (mc[i] === null || posWithinLine <= mc[i].index)) {
+          match = mc[i];
+        }
+        else {
+          var regex = state[i][0];
+          regex.lastIndex = posWithinLine;
+          match = regex.exec(line);
+          mc[i] = match;
+        }
+        if (match !== null && (bestMatch === null || match.index < bestMatch.index)) {
+          bestMatch = match;
+          bestPatternIndex = i;
+          if (match.index === posWithinLine) {
+            break;
+          }
+        }
+      }
+
+      if (bestMatch === null) {
+        output(line.substring(posWithinLine), null);
+        break;
+      }
+      else {
+        // got a match
+        if (bestMatch.index > posWithinLine) {
+          output(line.substring(posWithinLine, bestMatch.index), null);
+        }
+
+        var pattern = state[bestPatternIndex];
+
+        var newStyle = pattern[1];
+        var matchedString;
+        if (newStyle instanceof Array) {
+          for (var subexpression = 0; subexpression < newStyle.length; subexpression++) {
+            matchedString = bestMatch[subexpression + 1];
+            output(matchedString, newStyle[subexpression]);
+          }
+        }
+        else {
+          matchedString = bestMatch[0];
+          output(matchedString, newStyle);
+        }
+
+        switch (pattern[2]) {
+        case -1:
+          // do nothing
+          break;
+        case -2:
+          // exit
+          patternStack.pop();
+          break;
+        case -3:
+          // exitall
+          patternStack.length = 0;
+          break;
+        default:
+          // this was the start of a delimited pattern or a state/environment
+          patternStack.push(pattern);
+          break;
+        }
+      }
+    }
+
+    // end of the line
+    if (currentStyle) {
+      tags[numTags++] = {pos: pos};
+      if (currentStyle === 'sh_url') {
+        sh_setHref(tags, numTags, inputString);
+      }
+      currentStyle = null;
+    }
+    pos = startOfNextLine;
+  }
+
+  return tags;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// DOM-dependent functions
+
+function sh_getClasses(element) {
+  var result = [];
+  var htmlClass = element.className;
+  if (htmlClass && htmlClass.length > 0) {
+    var htmlClasses = htmlClass.split(' ');
+    for (var i = 0; i < htmlClasses.length; i++) {
+      if (htmlClasses[i].length > 0) {
+        result.push(htmlClasses[i]);
+      }
+    }
+  }
+  return result;
+}
+
+function sh_addClass(element, name) {
+  var htmlClasses = sh_getClasses(element);
+  for (var i = 0; i < htmlClasses.length; i++) {
+    if (name.toLowerCase() === htmlClasses[i].toLowerCase()) {
+      return;
+    }
+  }
+  htmlClasses.push(name);
+  element.className = htmlClasses.join(' ');
+}
+
+/**
+Extracts the tags from an HTML DOM NodeList.
+@param  nodeList  a DOM NodeList
+@param  result  an object with text, tags and pos properties
+*/
+function sh_extractTagsFromNodeList(nodeList, result) {
+  var length = nodeList.length;
+  for (var i = 0; i < length; i++) {
+    var node = nodeList.item(i);
+    switch (node.nodeType) {
+    case 1:
+      if (node.nodeName.toLowerCase() === 'br') {
+        var terminator;
+        if (/MSIE/.test(navigator.userAgent)) {
+          terminator = '\r';
+        }
+        else {
+          terminator = '\n';
+        }
+        result.text.push(terminator);
+        result.pos++;
+      }
+      else {
+        result.tags.push({node: node.cloneNode(false), pos: result.pos});
+        sh_extractTagsFromNodeList(node.childNodes, result);
+        result.tags.push({pos: result.pos});
+      }
+      break;
+    case 3:
+    case 4:
+      result.text.push(node.data);
+      result.pos += node.length;
+      break;
+    }
+  }
+}
+
+/**
+Extracts the tags from the text of an HTML element. The extracted tags will be
+returned as an array of tag objects. See sh_highlightString for the format of
+the tag objects.
+@param  element  a DOM element
+@param  tags  an empty array; the extracted tag objects will be returned in it
+@return  the text of the element
+@see  sh_highlightString
+*/
+function sh_extractTags(element, tags) {
+  var result = {};
+  result.text = [];
+  result.tags = tags;
+  result.pos = 0;
+  sh_extractTagsFromNodeList(element.childNodes, result);
+  return result.text.join('');
+}
+
+/**
+Merges the original tags from an element with the tags produced by highlighting.
+@param  originalTags  an array containing the original tags
+@param  highlightTags  an array containing the highlighting tags - these must not overlap
+@result  an array containing the merged tags
+*/
+function sh_mergeTags(originalTags, highlightTags) {
+  var numOriginalTags = originalTags.length;
+  if (numOriginalTags === 0) {
+    return highlightTags;
+  }
+
+  var numHighlightTags = highlightTags.length;
+  if (numHighlightTags === 0) {
+    return originalTags;
+  }
+
+  var result = [];
+  var originalIndex = 0;
+  var highlightIndex = 0;
+
+  while (originalIndex < numOriginalTags && highlightIndex < numHighlightTags) {
+    var originalTag = originalTags[originalIndex];
+    var highlightTag = highlightTags[highlightIndex];
+
+    if (originalTag.pos <= highlightTag.pos) {
+      result.push(originalTag);
+      originalIndex++;
+    }
+    else {
+      result.push(highlightTag);
+      if (highlightTags[highlightIndex + 1].pos <= originalTag.pos) {
+        highlightIndex++;
+        result.push(highlightTags[highlightIndex]);
+        highlightIndex++;
+      }
+      else {
+        // new end tag
+        result.push({pos: originalTag.pos});
+
+        // new start tag
+        highlightTags[highlightIndex] = {node: highlightTag.node.cloneNode(false), pos: originalTag.pos};
+      }
+    }
+  }
+
+  while (originalIndex < numOriginalTags) {
+    result.push(originalTags[originalIndex]);
+    originalIndex++;
+  }
+
+  while (highlightIndex < numHighlightTags) {
+    result.push(highlightTags[highlightIndex]);
+    highlightIndex++;
+  }
+
+  return result;
+}
+
+/**
+Inserts tags into text.
+@param  tags  an array of tag objects
+@param  text  a string representing the text
+@return  a DOM DocumentFragment representing the resulting HTML
+*/
+function sh_insertTags(tags, text) {
+  var doc = document;
+
+  var result = document.createDocumentFragment();
+  var tagIndex = 0;
+  var numTags = tags.length;
+  var textPos = 0;
+  var textLength = text.length;
+  var currentNode = result;
+
+  // output one tag or text node every iteration
+  while (textPos < textLength || tagIndex < numTags) {
+    var tag;
+    var tagPos;
+    if (tagIndex < numTags) {
+      tag = tags[tagIndex];
+      tagPos = tag.pos;
+    }
+    else {
+      tagPos = textLength;
+    }
+
+    if (tagPos <= textPos) {
+      // output the tag
+      if (tag.node) {
+        // start tag
+        var newNode = tag.node;
+        currentNode.appendChild(newNode);
+        currentNode = newNode;
+      }
+      else {
+        // end tag
+        currentNode = currentNode.parentNode;
+      }
+      tagIndex++;
+    }
+    else {
+      // output text
+      currentNode.appendChild(doc.createTextNode(text.substring(textPos, tagPos)));
+      textPos = tagPos;
+    }
+  }
+
+  return result;
+}
+
+/**
+Highlights an element containing source code.  Upon completion of this function,
+the element will have been placed in the "sh_sourceCode" class.
+@param  element  a DOM <pre> element containing the source code to be highlighted
+@param  language  a language definition object
+*/
+function sh_highlightElement(element, language) {
+  sh_addClass(element, 'sh_sourceCode');
+  var originalTags = [];
+  var inputString = sh_extractTags(element, originalTags);
+  var highlightTags = sh_highlightString(inputString, language);
+  var tags = sh_mergeTags(originalTags, highlightTags);
+  var documentFragment = sh_insertTags(tags, inputString);
+  while (element.hasChildNodes()) {
+    element.removeChild(element.firstChild);
+  }
+  element.appendChild(documentFragment);
+}
+
+function sh_getXMLHttpRequest() {
+  if (window.ActiveXObject) {
+    return new ActiveXObject('Msxml2.XMLHTTP');
+  }
+  else if (window.XMLHttpRequest) {
+    return new XMLHttpRequest();
+  }
+  throw 'No XMLHttpRequest implementation available';
+}
+
+function sh_load(language, element, prefix, suffix) {
+  if (language in sh_requests) {
+    sh_requests[language].push(element);
+    return;
+  }
+  sh_requests[language] = [element];
+  var request = sh_getXMLHttpRequest();
+  var url = prefix + 'sh_' + language + suffix;
+  request.open('GET', url, true);
+  request.onreadystatechange = function () {
+    if (request.readyState === 4) {
+      try {
+        if (! request.status || request.status === 200) {
+          eval(request.responseText);
+          var elements = sh_requests[language];
+          for (var i = 0; i < elements.length; i++) {
+            sh_highlightElement(elements[i], sh_languages[language]);
+          }
+        }
+        else {
+          throw 'HTTP error: status ' + request.status;
+        }
+      }
+      finally {
+        request = null;
+      }
+    }
+  };
+  request.send(null);
+}
+
+/**
+Highlights all elements containing source code on the current page. Elements
+containing source code must be "pre" elements with a "class" attribute of
+"sh_LANGUAGE", where LANGUAGE is a valid language identifier; e.g., "sh_java"
+identifies the element as containing "java" language source code.
+*/
+function sh_highlightDocument(prefix, suffix) {
+  var nodeList = document.getElementsByTagName('pre');
+  for (var i = 0; i < nodeList.length; i++) {
+    var element = nodeList.item(i);
+    var htmlClasses = sh_getClasses(element);
+    for (var j = 0; j < htmlClasses.length; j++) {
+      var htmlClass = htmlClasses[j].toLowerCase();
+      if (htmlClass === 'sh_sourcecode') {
+        continue;
+      }
+      if (htmlClass.substr(0, 3) === 'sh_') {
+        var language = htmlClass.substring(3);
+        if (language in sh_languages) {
+          sh_highlightElement(element, sh_languages[language]);
+        }
+        else if (typeof(prefix) === 'string' && typeof(suffix) === 'string') {
+          sh_load(language, element, prefix, suffix);
+        }
+        else {
+          throw 'Found <pre> element with class="' + htmlClass + '", but no such language exists';
+        }
+        break;
+      }
+    }
+  }
+}
+function langx(lang) {
+   if (lang==7) return "G++14";
+   if (lang==1) return "G++";
+   if (lang==2) return "GCC";
+   if (lang==3) return "JAVA";
+   if (lang==4) return "Pascal";
+   if (lang==5) return "Python";
+   return lang; 
+}
+function wzy_status() {
+var pp="";
+var n=ee.length-1;
+for (var i=0;i<n;i++) {
+   var ff=ee[i].split("`");
+   var runid=ff[1].substr(1);
+   if (i%2==1) pp="#F0F0F0"; else pp="#FCFCFC";
+   document.write("<tr bgcolor="+pp+" style='line-height: 27px;height: 27px;'><td align='center'><a href=userinfo.php?name="+ff[0]+">"+ff[0]+"</a></td>");
+   if (ff[1].substr(0,1)=="1")
+      document.write("<td><a href=show_source.php?runid="+runid+" class='runid_link'>"+runid+"</a></td>");
+   else 
+      document.write("<td>"+ff[1].substr(1)+"</td>");
+   document.write("<td align='center'><a href=problem_show.php?pid="+ff[2]+">"+ff[2]+"</a></td>");
+   if (ff[3]=="C")
+      document.write("<td><center><strong><a href=show_ce_info.php?runid="+runid+" class='ce'><span class='ce'><font size='2'>编译错误</span></a></strong></center></td>");
+   else if (ff[3]=="J")
+      document.write("<td align='center'><strong><font size='2'>正在判题</strong></td>");
+   else if (ff[3]=="W")
+      document.write("<td align='center'><strong><font size='2'>等待判题</strong></td>");  
+   else{
+      pos = ff[3].indexOf(':');
+      leftStr = ff[3].substr(0, pos);
+      rightStr = ff[3].substr(pos+1);
+      pos=leftStr.indexOf('|');
+      e1=leftStr.substr(0,pos);
+      e2=leftStr.substr(pos+1);
+      e1 = e1.replace("Accepted", "<span class='ac'><font size='2'>通过 </span> ");
+      e1 = e1.replace("Unaccepted", "<span class='wa'><font size='2'>未通过 </span>");
+      rightStr = rightStr.replace(/_/g, "KB ");
+      rightStr = rightStr.replace(/,/g, "MS <br>");
+      rightStr = rightStr.replace(/\|/g, " ");
+      rightStr = rightStr.replace(/AC/g, "*<span class='ac'>答案正确</span>");
+      rightStr = rightStr.replace(/RE/g, "*<span class='re'>运行错误</span>");
+      rightStr = rightStr.replace(/CE/g, "*<span class='ce'>编译错误</span>");
+      rightStr = rightStr.replace(/WA/g, "*<span class='wa'>答案错误</span>");
+      rightStr = rightStr.replace(/PE/g, "*<span class='pe'>格式错误</span>");
+      rightStr = rightStr.replace(/TLE/g, "*<span class='tle'>运行超时</span>");
+      rightStr = rightStr.replace(/MLE/g, "*<span class='mle'>内存超限</span>");
+      rightStr = rightStr.replace(/OLE/g, "*<span class='ole'>输出超限</span>");
+      rightStr = rightStr.replace(/RF/g,  "*<span class='rf'>函数受限</span>");
+      s=0;s1=rightStr.length;
+      for (j=0; j<100; ++j) {
+          rightStr = rightStr.replace("*", "测试点"+(j+1)+": ");
+          if (s1<rightStr.length) {s++;s1=rightStr.length;} else break;
+      } 
+      ret = "<td onClick=hide('"+runid+"') align='center'><strong>"+ e1+parseInt(10*e2/s+0.3) + "分<div id="+runid+" style=\"display:none\">"+ rightStr + "</strong></td>";
+      document.write(ret);
+   } 
+   document.write("<td align='center'>"+langx(ff[4])+"</td><td align='center'>"+ff[5]+" Bytes</td><td align='center'>"+ff[6]+"</td></tr>");
+}   
+}
+function hide(id) {
+  tmp_u = id;
+  if (document.getElementById(tmp_u).style.display != "none"){ 
+     document.getElementById(tmp_u).style.display = "none";  
+     }
+  else { 
+     document.getElementById(tmp_u).style.display = ""; 
+     } 
+}
+function copyUrl(id){
+  var Url2=document.getElementById(id).innerText;
+  var oInput = document.createElement('textarea');
+  oInput.value = Url2;
+  document.body.appendChild(oInput);
+  oInput.select(); // 选择对象
+  document.execCommand("Copy"); // 执行浏览器复制命令
+  oInput.className = 'oInput';
+  oInput.style.display='none';
+}
+function pshow(str){
+   document.write("<div class=xxbox>");
+   var s1,s2,s3,a,b,c;
+   while(str.length>0){
+      s1=str.indexOf("\n");s2=str.indexOf("<table");s3=str.indexOf("<pre");
+      if (s1+s2+s3==-3) {document.write("<p>"+str+"</p>");break;}
+      a=9999999;b=-1;
+      if (s1>=0 && s1<a) {a=s1;b=1;}
+      if (s2>=0 && s2<a) {a=s2;b=2;}
+      if (s3>=0 && s3<a) {a=s3;b=3;}
+      if (b==1){
+         document.write("<p>"+str.substr(0,a)+"</p>");
+         str=str.substring(a+1);continue;
+      }
+      if (b>1 && a>0){
+         document.write("<p>"+str.substr(0,a)+"</p>");
+         str=str.substring(a);continue;
+      }
+      if (b==2 && a==0){
+         s1=str.indexOf("</table>",1);
+         document.write(str.substr(0,s1+8));
+         str=str.substring(s1+8);continue;   
+      }
+      if (b==3 && a==0){
+         s1=str.indexOf("</pre>",1);
+         document.write(str.substr(0,s1+6));
+         str=str.substring(s1+6);continue;   
+      } 
+   }
+   document.write("</div>");
+}
+function index3(str) {
+  var k1=-1,k2=0;
+  var k=str.length; 
+  for (var j=ff.length-1;j>=0;j--)
+     if (str==ff[j].substr(0,k)) {k1=j;break;}
+  if (k1>=0) {
+     for (var j=dd.length-1;j>=0;j--)
+        if (str==dd[j]) {k2=1;break;} 
+  }
+  if (k1<0) return "#"+str;
+  return k2+"`"+ff[k1]; 
+}
+function index_xp(str){
+   if (str[0]=='#')
+      return "<td colspan=4>"+"<font size=2 color=#001290>"+str.substr(1)+"</font></td>"; 
+   var tt="";
+   var ff=str.split("`");
+   t1="";if (ff[0]=="1") t1=" color=red"; 
+   tt="<td class='plist'><a href=problem_show.php?pid="+ff[1]+" class='list2_link'><font size='2'"+t1+">"+ff[1]+"</a></td>";
+   tt=tt+"<td class='xlist'><a href=problem_show.php?pid="+ff[1]+" class='list2_link'><font size='2'>"+ff[2]+"</a></td>";
+   tt=tt+"<td class='plist'><a href=status.php?showpid="+ff[1]+"&showres=Accepted class='list2_link'><font size=2>"+ff[3]+"</a></td>";
+   tt=tt+"<td class='plist'><a href=status.php?showpid="+ff[1]+" class='list2_link'><font size=2>"+ff[4]+"</a></td>";  
+   return tt;
+}
+function indexmenu(){
+  var n=ee.length;
+  var st1="<th width='5%' class='plist'><font size='3'>题号</th><th width='20%' class='plist'><font size='3'>题目名称</th><th width='8%' class='plist'><font size='3'>通过数</th><th width='8%' class='plist'><font size='3'>提交数</th>";
+  var m=0;
+  var j=700;if (n>14) j=950;
+  document.write("<table width="+j+"px class='plist' ><tr bgcolor='#ccccff'>");
+  if (n<=14) {
+     m=n;
+     document.write("<th width='15%' class='plist'><font size='3'>题号</th><th width='40%' class='plist'><font size='3'>题目名称</th><th width='15%' class='plist'><font size='3'>通过数</th><th width='15%' class='plist'><font size='3'>提交数 </th></tr>");
+  }else{
+     m=parseInt(n/2);
+     if (n%2!=0) m++; 
+     document.write(st1+"<th width='2%'>&nbsp;</th>"+st1+"</tr>");
+  }
+  var pt=0,pp="",k1,k2;
+  for (var i=0;i<m;i++) {
+     if (pt==1) pp="#F0F0F0"; else pp="#FCFCFC";
+     pt=1-pt;
+     document.write("<tr bgcolor="+pp+">"+index_xp(index3(ee[i])));
+     if (n>14){
+        if (i+m<n)
+           document.write("<td></td>"+index_xp(index3(ee[i+m])));
+        else
+           document.write("<td colspan=5></td>");
+     }
+     document.write("</tr>");  
+  }            
+  document.write("</table>");
+}
+

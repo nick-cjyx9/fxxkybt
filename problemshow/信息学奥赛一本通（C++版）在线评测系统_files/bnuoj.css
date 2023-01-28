@@ -1,0 +1,333 @@
+body {
+margin: 0;
+padding: 0;
+background-image: url("background.jpg");
+}
+.duanluo {text-indent:2em; padding:1px;}
+p {text-indent:2em; padding:0px 2px 0px 2px;}
+h1 {font-size:46px;margin-bottom:20px;margin-top:20px;color: #000099;}
+h2 {font-size:30px;color:darkblue;margin-bottom:0px;}
+h3 {color:darkblue;margin-bottom:0px;}
+
+.welc {font-size:36px;text-align:center;color:red;}
+
+.warn {font-size:42px;text-align:center;color:red;}
+.note {font-size:42px;text-align:center;color:darkblue;}
+
+
+table.webtop {font-family: arial;}
+th.webtop {font-size:20px;font-weight: normal;}
+td.webtop {font-size:18px;}
+.webtop .fail {color:#FF0000;}
+
+table.reglist {font-family: arial;}
+th.reglist {font-size:20px;font-weight: normal;}
+td.reglist {font-size:18px;}
+
+table.menu  {font-family: arial;}
+th.menu {font-size:20px;font-weight: normal;}
+td.menu {font-size:18px;}
+.menu .fail {color:#FF0000;}
+
+table.plist {caption-side:top;}
+caption.plist {font-size:22px;}
+th.plist {font-size:24px;text-align:center;}
+td.plist {font-size:18px;text-align:center;}
+
+table.xlist {caption-side:top;}
+caption.xlist {font-size:22px;}
+th.xlist {font-size:24px;text-align:center;}
+td.xlist {font-size:18px;text-align:left;}
+
+table.rlist {caption-side:top;}
+caption.rlist {font-size:22px;}
+th.rlist {font-size:24px;}
+td.rlist {font-size:18px;text-align:center;}
+
+table.standing {caption-side:top;border:1px solid #DFDFDF;border-collapse:collapse;}
+caption.standing {margin-top:20px;font-size:20px;color:darkblue;}
+th.standing {font-size:18px;border:1px solid #DFDFDF;}
+td.standing {font-size:16px;text-align:center;border:1px solid #DFDFDF;}
+
+table.mail {caption-side:top;border:2px solid #FFFFFF;border-collapse:collapse;}
+caption.mail {margin-top:20px;font-size:20px;color:darkblue;font-weight:bold;}
+th.mail {font-size:18px;border:2px solid #FFFFFF;}
+td.mail {font-size:16px;border:2px solid #FFFFFF;}
+
+table.pstat {caption-side:top;border:1px solid #FFFFFF;border-collapse:collapse;}
+td.pstat {font-size:14px;border:1px solid #FFFFFF;}
+td.pstatstand {font-size:14px;text-align:center;border:1px solid #FFFFFF;}
+th.pstat {font-size:14px;border:1px solid #FFFFFF;}
+caption.pstat {text-align:center;font-size:14px;}
+
+table.status {margin-top:5px;}
+td.status {font-size:14px;text-align:center;}
+
+.substitle{color:#990000;}
+
+th.clist_title {font-size:24px;color:darkblue;}
+th.clist {font-size:24px;}
+
+.ac {color: blue;}
+.wa {color: red;}
+.tle {color: red;}
+.mle {color: red;}
+.ole {color: red;}
+.pe {color: red;}
+.ce {color: green;}
+.rf {color: black;}
+.re {color: red;}
+td.ceinfo {text-align:left;}
+
+td.pcontent {text-align:left;}
+
+.data {font-family:monospace;}
+
+table.cshow {caption-side:top;}
+caption.cshow {font-size:18px;}
+th.cshow {font-size:22px;}
+td.cshow {font-size:22px;text-align:center;}
+.ctitle {font-size:30px;text-align:center;color:darkblue;margin-bottom:5px;margin-top:5px;}
+.ctime {font-size:18px;text-align:center;color:black;margin-bottom:5px;margin-top:5px;}
+.cpublic {color:blue;}
+.cprivate {color:red;}
+.crunning {color:red;}
+.cscheduled {color:blue;}
+.cpassed {color:green;}
+
+A:link{font-size:16px;COLOR:black ;TEXT-DECORATION: none;}
+A:visited{font-size:16px;COLOR:black ;TEXT-DECORATION: none;}
+A:hover{font-size:16px;COLOR:red ;TEXT-DECORATION: none;}
+A:active{font-size:16px;COLOR:red ;TEXT-DECORATION: none;}
+
+A.substitle:link{font-size:16px;COLOR:red ;TEXT-DECORATION: none;}
+A.substitle:visited{font-size:16px;COLOR:red ;TEXT-DECORATION: none;}
+A.substitle:hover{font-size:16px;COLOR:red ;TEXT-DECORATION: underline;}
+A.substitle:active{font-size:16px;COLOR:red ;TEXT-DECORATION: none;}
+
+A.menu:link{font-size:20px;COLOR:black ;TEXT-DECORATION: none;}
+A.menu:visited{font-size:20px;COLOR:black ;TEXT-DECORATION: none;}
+A.menu:hover{font-size:20px;COLOR:red ;TEXT-DECORATION: none;}
+A.menu:active{font-size:20px;COLOR:red ;TEXT-DECORATION: none;}
+
+A.ce:link{TEXT-DECORATION: none;}
+A.ce:visited{TEXT-DECORATION: none;}
+A.ce:hover{TEXT-DECORATION: underline;}
+A.ce:active{TEXT-DECORATION: none;}
+
+A.runid_link:link{TEXT-DECORATION: underline;}
+A.runid_link:visited{TEXT-DECORATION: underline;}
+A.runid_link:hover{TEXT-DECORATION: underline;}
+A.runid_link:active{TEXT-DECORATION: none;}
+
+A.bottom_link:link{font-size:16px;color:blue;TEXT-DECORATION: none;}
+A.bottom_link:visited{font-size:16px;color:blue;TEXT-DECORATION: none;}
+A.bottom_link:hover{font-size:16px;color:red;TEXT-DECORATION: underline;}
+A.bottom_link:active{font-size:16px;TEXT-DECORATION: none;}
+
+A.list_link:link{font-size:22px;COLOR:black ;TEXT-DECORATION: none;}
+A.list_link:visited{font-size:22px;COLOR:black ;TEXT-DECORATION: none;}
+A.list_link:hover{font-size:22px;COLOR:red ;TEXT-DECORATION: none;}
+A.list_link:active{font-size:22px;COLOR:red ;TEXT-DECORATION: none;}
+
+A.list2_link:link{font-size:18px;COLOR:black ;TEXT-DECORATION: none;}
+A.list2_link:visited{font-size:18px;COLOR:black ;TEXT-DECORATION: none;}
+A.list2_link:hover{font-size:18px;COLOR:red ;TEXT-DECORATION: none;}
+A.list2_link:active{font-size:18px;COLOR:red ;TEXT-DECORATION: none;}
+
+A.standing:link{font-size:18px;COLOR:black ;TEXT-DECORATION: none;}
+A.standing:visited{font-size:18px;COLOR:black ;TEXT-DECORATION: none;}
+A.standing:hover{font-size:18px;COLOR:red ;TEXT-DECORATION: none;}
+A.standing:active{font-size:18px;COLOR:red ;TEXT-DECORATION: none;}
+
+A.pstat:link{font-size:14px;COLOR:black ;TEXT-DECORATION: none;}
+A.pstat:visited{font-size:14px;COLOR:black ;TEXT-DECORATION: none;}
+A.pstat:hover{font-size:14px;COLOR:red ;TEXT-DECORATION: none;}
+A.pstat:active{font-size:14px;COLOR:red ;TEXT-DECORATION: none;}
+
+A.pstat2:link{font-size:14px;COLOR:black ;TEXT-DECORATION: underline;}
+A.pstat2:visited{font-size:14px;COLOR:black ;TEXT-DECORATION: underline;}
+A.pstat2:hover{font-size:14px;COLOR:red ;TEXT-DECORATION: underline;}
+A.pstat2:active{font-size:14px;COLOR:red ;TEXT-DECORATION: underline;}
+
+A.a7:link{color:blue ;TEXT-DECORATION: none;}
+A.a7:visited{color:#0072E3 ;TEXT-DECORATION: none;}
+A.a7:hover{color:#222222 ;TEXT-DECORATION: none;}
+A.a7:active{color:#000000 ;TEXT-DECORATION: none;}
+
+A.a8:link{color:red ;TEXT-DECORATION: none;}
+A.a8:visited{color:#CE0000 ;TEXT-DECORATION: none;}
+A.a8:hover{color:#222222 ;TEXT-DECORATION: none;}
+A.a8:active{color:#000000 ;TEXT-DECORATION: none;}
+div.xxbox{
+  margin:5px auto;
+  padding:5px;
+  line-height:22px;
+  width:999px;
+  border-radius:3px;
+  background-color:#fcfcfc;
+  text-align:left;
+  box-shadow:0px 0px 1px #000;
+  word-break: break-all;word-wrap: break-word;white-space: normal;
+}
+.menuDiv { 
+   /*border: 2px solid #aac; */
+   overflow: hidden; 
+   display:inline-block;
+   text-align: center;
+   margin:0 auto; 
+ }
+ /* 去掉a标签的下划线 */
+.menuDiv a {
+   text-decoration: none;
+ }
+ /* 设置ul和li的样式 */
+.menuDiv ul , .menuDiv li {
+   list-style: none;
+   margin: 0;
+   padding: 0;
+   float: left;
+ } 
+ /* 设置二级菜单绝对定位，并隐藏 */
+.menuDiv > ul > li > ul {
+   position: absolute;
+   display: none;
+ }
+
+ /* 设置三级菜单绝对定位，并隐藏 */
+.menuDiv > ul > li > ul > li > ul {
+   position: absolute;
+   display: none;
+ }
+
+    /* 设置二级菜单的li的样式 */
+.menuDiv > ul > li > ul > li {
+   float: none;
+ }
+    /* 鼠标放在一级菜单上，显示二级菜单 */
+.menuDiv > ul > li:hover ul {
+   display: block;
+   }
+  /* 一级菜单 */
+.menuDiv > ul > li > a {
+   width: 180px;
+   line-height: 36px;
+   /*color: black;
+   background-color: #cfe;*/
+   text-align: left;
+   /*border-left: 1px solid #bbf; */
+   display: block;  
+   }
+   /* 在一级菜单中，第一个不设置左边框 */
+.menuDiv > ul > li:first-child > a {
+   /*border-left: none;*/
+   }
+  /* 在一级菜单中，鼠标放上去的样式 */
+.menuDiv > ul > li > a:hover {
+  /* color: #f0f;*/
+   background-color: #bcf;
+  }
+  /* 二级菜单 */
+.menuDiv > ul > li > ul > li > a {
+   width: 200px;
+   line-height: 20px;
+   /*color: #456; */
+   background-color: #eff;
+   text-align: left;
+   /*border: 1px solid #ccc;*/
+   border-top: none;
+   display: block;
+  }
+    /* 在二级菜单中，第一个设置顶边框 */
+.menuDiv > ul > li > ul > li:first-child > a {
+   /*border-top: 1px solid #ccc;*/
+  }
+   /* 在二级菜单中，鼠标放上去的样式 */
+.menuDiv > ul > li > ul > li > a:hover {
+   /* color: #a4f;
+    background-color: #cdf;*/
+    }
+/* -------------菜单css代码----------end---------- */
+
+
+{ 
+padding-bottom: 0px; 
+margin: 0px; 
+padding-left: 0px; 
+padding-right: 0px; 
+font-size: 12px; 
+padding-top: 0px; 
+} 
+BODY 
+{ 
+padding-left: 0px; 
+padding-top: 0px; 
+} 
+.wid240 
+{ 
+width: 242px; 
+margin-bottom: 20px; 
+} 
+.wid180 
+{ 
+width: 182px; 
+} 
+.tab 
+{ 
+border-bottom: #000 1px solid; 
+border-left: #000 0px solid; 
+border-top: #000 0px solid; 
+border-right: #000 0px solid; 
+} 
+.tab UL 
+{ 
+zoom: 1; 
+clear: both; 
+} 
+.tab UL:after 
+{ 
+display: block; 
+height: 0px; 
+visibility: hidden; 
+clear: both; 
+content: ""; 
+} 
+.tab UL LI 
+{ 
+text-align: center; 
+line-height: 26px; 
+width: 200px; 
+display: inline; 
+//background: #000; 
+float: left; 
+height: 26px; 
+//color: #fff; 
+} 
+.tab UL LI.on 
+{ 
+background: #fff; 
+color: #000; 
+} 
+.tabList 
+{ 
+border-bottom: #000 0px solid; 
+border-left: #000 0px solid; 
+height: 60px; 
+border-top: #000 0px; 
+border-right: #000 0px solid; 
+} 
+.tabList .one 
+{ 
+padding-bottom: 10px; 
+padding-left: 10px; 
+padding-right: 10px; 
+display: none; 
+color: #ff0000; 
+padding-top: 10px; 
+} 
+.tabList .block 
+{ 
+display: block; 
+} 
+
+
