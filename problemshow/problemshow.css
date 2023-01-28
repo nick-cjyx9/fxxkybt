@@ -20,14 +20,6 @@ pre{
 .webtop,.menu,body>center>hr:nth-child(4),body > center > hr:nth-child(11){
     display: none;
 }
-body > center {
-    padding: 0;
-    background: hsla(0, 0%, 100%, 0.6); 
-}
-body{
-    background-image: url("https://s2.loli.net/2023/01/16/eZMEqJrzXuWSdHF.png");
-    background-position-x: -850px;
-}
 
 body > center > center:nth-child(10){
     display: flex;

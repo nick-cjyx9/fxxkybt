@@ -34,7 +34,7 @@ function loadBoot() {
     document.documentElement.appendChild(script3);
 
     document.documentElement.innerHTML=document.documentElement.innerHTML.replace(`<link rel=stylesheet href='bnuoj.css'></link>`,'');
-    document.documentElement.innerHTML=document.documentElement.innerHTML.replace('﻿','')
+    document.documentElement.innerHTML=document.documentElement.innerHTML.replace('﻿','');
 }
 function createTop() {
     let bf = document.querySelector("body > center");
@@ -64,7 +64,7 @@ function createTop() {
         <li class="unsign-show"><a href="find_pd.php">找回密码</a></li>
         <!-- 艹tmd把href写成herf以为是bug改了半天，日！ --!-->
         <li class="unsign-show"><a href="register.php">注册新用户</a></li>
-        <li id="toast_ss"><a href="#">请登录</a></li>
+        <li id="toast_ss"><a href="http://ybt.ssoier.cn:8088/login0.php">请登录</a></li>
         <li class="sign-show"><a href="#" id="editProf">修改资料</a></li>
         <li class="sign-show fuck"><a href="http://ybt.ssoier.cn:8088/mail_index.php" id="mail">邮件</a></li>
         <li class="sign-show fuck"><a href="http://ybt.ssoier.cn:8088/logout.php" id="unlog">退出登录</a></li>
@@ -134,12 +134,12 @@ function createCopyBtn() {
         `; //按钮
         holder.onclick = function () {
             //监听按钮按下事件
-            const textarea = document.createElement('textarea') // 创建textarea对象
-            textarea.value = preTag.innerText // 设置复制内容
-            document.body.appendChild(textarea) // 添加临时实例
+            const textarea = document.createElement('textarea'); // 创建textarea对象
+            textarea.value = preTag.innerText; // 设置复制内容
+            document.body.appendChild(textarea); // 添加临时实例
             textarea.select() // 选择实例内容
-            document.execCommand('Copy') // 执行复制
-            document.body.removeChild(textarea) // 删除临时实例
+            document.execCommand('Copy'); // 执行复制
+            document.body.removeChild(textarea); // 删除临时实例
             truebtn = holder.children[0];
             truebtn.innerText = 'copied!';
             setTimeout(() => truebtn.innerText = 'copy', 1000);
@@ -163,7 +163,7 @@ function problemShow() {
     var path = location.pathname;
     loadBoot();
     createTop();
-    if (path.search("problem_show.php")) {
+    if (path.search("problem_show.php")!=-1) {
         problemShow();
     }
 })();
