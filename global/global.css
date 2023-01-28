@@ -5,7 +5,23 @@
     -ms-text-size-adjust: none;
     font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", "Noto Sans", "Noto Sans CJK SC", "Noto Sans CJK", "Source Han Sans", "PingFang SC", "Segoe UI", "Microsoft YaHei", sans-serif;
 }
-
+#loginbtn{
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    list-style: none;
+    box-sizing: border-box;
+    -webkit-text-size-adjust: none;
+    font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", "Noto Sans", "Noto Sans CJK SC", "Noto Sans CJK", "Source Han Sans", "PingFang SC", "Segoe UI", "Microsoft YaHei", sans-serif;
+    background-color: transparent;
+    font-size: 16px;
+    TEXT-DECORATION: none;
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+    line-height: 20px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    color: #777;
+}
 .webtop,
 .menu,
 body>center>hr:nth-child(4),

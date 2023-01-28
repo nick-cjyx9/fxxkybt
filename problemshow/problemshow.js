@@ -33,12 +33,12 @@ function createCopyBtn() {
         `; //按钮
         holder.onclick = function () {
             //监听按钮按下事件
-            const textarea = document.createElement('textarea') // 创建textarea对象
-            textarea.value = preTag.innerText // 设置复制内容
-            document.body.appendChild(textarea) // 添加临时实例
+            const textarea = document.createElement('textarea'); // 创建textarea对象
+            textarea.value = preTag.innerText; // 设置复制内容
+            document.body.appendChild(textarea); // 添加临时实例
             textarea.select() // 选择实例内容
-            document.execCommand('Copy') // 执行复制
-            document.body.removeChild(textarea) // 删除临时实例
+            document.execCommand('Copy'); // 执行复制
+            document.body.removeChild(textarea); // 删除临时实例
             truebtn = holder.children[0];
             truebtn.innerText = 'copied!';
             setTimeout(() => truebtn.innerText = 'copy', 1000);
@@ -51,7 +51,7 @@ function problemShow() {
     let script = document.createElement('link');
     script.setAttribute('rel', 'stylesheet');
     script.setAttribute('type', 'text/css');
-    script.href = "https://cdn.jsdelivr.net/gh/nick-cjyx9/fxxkybt/problemshow.css";
+    script.href = "https://cdn.jsdelivr.net/gh/nick-cjyx9/fxxkybt/problemshow/problemshow.css";
     document.documentElement.appendChild(script);
     createBtn();
     createCopyBtn();
