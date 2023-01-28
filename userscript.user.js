@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name         New Userscript
+// @name         fxxkybt
 // @namespace    http://tampermonkey.net/
-// @version      0.1
-// @description  try to take over the world!
-// @author       You
+// @version      0.114514
+// @description  fxxk ybt
+// @author       cjyx9
 // @match        http://ybt.ssoier.cn:8088/problem_show.php?pid=*
 // @grant        none
 // ==/UserScript==
@@ -32,22 +32,20 @@ function createTop() {
         <li><a href="http://ybt.ssoier.cn:8088/problem_list.php?page=">题目列表</a></li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
-        <li class="dropdown">
-            <li id="toast_ss"><a href="#">请登录</a></li>
-            <li class="unsign-show"><a href="login0.php">用户登录</a></li>
-            <li class="unsign-show"><a href="find_pd.php">找回密码</a></li>
-            <li class="unsign-show"><a href="register.php">注册新用户</a></li>
-            <li class="sign-show"><a herf="#" id="editProf">修改资料</a></li>
-            <li class="sign-show"><a herf="mail_index.php">邮件</a></li>
-            <li class="sign-show"><a herf="logout.php">退出登录</a></li>
-        <li>
+        <li class="unsign-show"><a href="login0.php">用户登录</a></li>
+        <li class="unsign-show"><a href="find_pd.php">找回密码</a></li>
+        <!-- 艹tmd把href写成herf以为是bug改了半天，日！ --!-->
+        <li class="unsign-show"><a href="register.php">注册新用户</a></li>
+        <li id="toast_ss"><a href="#">请登录</a></li>
+        <li class="sign-show"><a href="#" id="editProf">修改资料</a></li>
+        <li class="sign-show fuck"><a href="http://ybt.ssoier.cn:8088/mail_index.php" id="mail">邮件</a></li>
+        <li class="sign-show fuck"><a href="http://ybt.ssoier.cn:8088/logout.php" id="unlog">退出登录</a></li>
       </ul>
-    </div><!--/.nav-collapse -->
+    </div>
   </div>
     `
     bf.insertBefore(example,af)
 }
-
 function createBtn(){
     let child = document.querySelectorAll(".bottom_link")
     let af = child[0].parentElement;
@@ -68,7 +66,6 @@ function createBtn(){
       btns[i].href=child[i].href
     }
 }
-
 function loadBoot(){
     let script = document.createElement('link');
     script.setAttribute('rel', 'stylesheet');
@@ -94,12 +91,10 @@ function loadBoot(){
     script1.href = "https://cdn.jsdelivr.net/gh/nick-cjyx9/fxxkybt/problemshow.css";
     document.documentElement.appendChild(script1);
 }
-
 function getId(){
   let father = document.querySelector("body > center > table.webtop > tbody > tr > th:nth-child(3) > table > tbody > tr:nth-child(1) > th")
   return father.innerText.replace("  修改资料",'')
 }
-
 function isSigned(){
   let father = document.querySelector("table.webtop>tbody>tr>th:nth-child(3)")
   let childlist = father.children;
@@ -111,9 +106,41 @@ function isSigned(){
   }
   return true
 }
-
+function copy(t){
+  const input = document.createElement('textarea') // 创建input对象
+  input.value = t // 设置复制内容
+  document.body.appendChild(input) // 添加临时实例
+  input.select() // 选择实例内容
+  document.execCommand('Copy') // 执行复制
+  document.body.removeChild(input) // 删除临时实例
+}
+// const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+function createCopyBtn(){
+  let xxboxes = document.querySelectorAll("pre")
+  for (let i = 0; i < xxboxes.length; i++) {
+    const xxbox = xxboxes[i]
+    let env = xxbox.parentElement
+    let btn = document.createElement("div")
+    btn.innerHTML=`
+    <a class="copy" style="
+    border-color: rgb(52, 152, 219);
+    background-color: rgba(52, 152, 219, 0);
+    font-size: 1.2em;
+    float: right;
+    margin-right: 18px;">copy</span>
+    `
+    btn.onclick=function(){
+      copy(xxbox.innerText)
+      truebtn=btn.children[0]
+      truebtn.innerText='copied!'
+      setTimeout(()=>truebtn.innerText='copy',1000)
+    }
+    env.appendChild(btn)
+  }
+}
 (function () {
   'use strict';
+  document.documentElement.innerHTML=document.documentElement.innerHTML.replace(`<link rel=stylesheet href='bnuoj.css'></link>`,'')
   createTop()
   let stlyess=document.createElement('style')
   if(isSigned()){
@@ -124,8 +151,11 @@ function isSigned(){
   }else{
     stlyess.innerText=`.sign-show{display:none !important;}`
   }document.documentElement.appendChild(stlyess);
-
+  document.documentElement.innerHTML=document.documentElement.innerHTML.replace('﻿','')
   createBtn()
   loadBoot()
-
+  createCopyBtn()
 })();
+
+
+
