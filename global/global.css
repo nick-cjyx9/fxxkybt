@@ -8,6 +8,7 @@
 #loginbtn{
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     list-style: none;
+    border: 0;
     box-sizing: border-box;
     -webkit-text-size-adjust: none;
     font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", "Noto Sans", "Noto Sans CJK SC", "Noto Sans CJK", "Source Han Sans", "PingFang SC", "Segoe UI", "Microsoft YaHei", sans-serif;
@@ -32,11 +33,12 @@ body>center>hr:nth-child(11) {
 body>center {
     padding: 0;
     height: 100%;
-    background: hsla(0, 0%, 100%, 0.6);
+    /* background: hsla(0, 0%, 100%, 0.6); */
 }
 
 body {
-    background-image: url("https://s2.loli.net/2023/01/16/eZMEqJrzXuWSdHF.png");
+    /* background-image: url("https://s2.loli.net/2023/01/16/eZMEqJrzXuWSdHF.png"); */
+    background-color: white;
     background-position-x: -300px;
 }
 

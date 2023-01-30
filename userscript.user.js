@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         fxxkybt
+// @name         fxxkybtoff
 // @namespace    http://tampermonkey.net/
-// @version      0.114514
+// @version      0.1145
 // @description  fxxk it
 // @author       cjyx9
 // @match        http://ybt.ssoier.cn:8088/*
@@ -15,22 +15,22 @@ function loadBoot() {
   script.setAttribute('type', 'text/css');
   script.setAttribute('integrity', 'sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu');
   script.setAttribute('crossorigin', 'anonymous');
-  script.href = "https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css";
+  script.href = "file:///E:\dev\ybt\ybt_style_off\src\bootstrap.min.css";
   document.documentElement.appendChild(script);
 
   let script1 = document.createElement('script');
-  script1.src = "https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js";
+  script1.src = "file:///E:\dev\ybt\ybt_style_off\src\jquery.min.js";
   document.documentElement.appendChild(script1);
 
   let script2 = document.createElement('script');
   script2.setAttribute('integrity', 'sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd');
   script2.setAttribute('crossorigin', 'anonymous');
-  script2.src = "https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js";
+  script2.src = "file:///E:\dev\ybt\ybt_style_off\src\bootstrap.min.js";
   document.documentElement.appendChild(script2);
   let script3 = document.createElement('link');
   script3.setAttribute('rel', 'stylesheet');
   script3.setAttribute('type', 'text/css');
-  script3.href = "https://cdn.jsdelivr.net/gh/nick-cjyx9/fxxkybt/global/global.css";
+  script3.href = "file:///E:\dev\ybt\ybt_style_off\global\global.css";
   document.documentElement.appendChild(script3);
 
   document.documentElement.innerHTML = document.documentElement.innerHTML.replace(`<link rel=stylesheet href='bnuoj.css'></link>`, '');
@@ -80,6 +80,8 @@ function createTop() {
   } else {
     stlyess.innerText = `.sign-show{display:none !important;}`;
   } document.documentElement.appendChild(stlyess);
+  let bbb = document.querySelector(".webtop").parentNode;
+  bbb.innerHTML=`<div class="sbod" style="background: hsla(0, 0%, 100%, 0.6);height:100%;">`+bbb.innerHTML+`</div>`;
 }
 function isSigned() {
   let father = document.querySelector("table.webtop>tbody>tr>th:nth-child(3)");
@@ -163,7 +165,7 @@ function createCopyBtn() {
     let holder = document.createElement("div"); //搭载按钮的容器
     holder.innerHTML = `
         <a class="copy" style="
-        font-size: .8em;
+        font-size: 1.2em;
         float: right;
         margin-right: 18px;">copy</span>
         `; //按钮
@@ -187,7 +189,7 @@ function problemShow() {
   let script = document.createElement('link');
   script.setAttribute('rel', 'stylesheet');
   script.setAttribute('type', 'text/css');
-  script.href = "https://cdn.jsdelivr.net/gh/nick-cjyx9/fxxkybt/problemshow/problemshow.css";
+  script.href = "file:///E:\dev\ybt\ybt_style_off\problemshow\problemshow.css";
   document.documentElement.appendChild(script);
   createBtn();
   createCopyBtn();
